@@ -7,10 +7,17 @@ if (!$_SESSION) {
     die();
 }
 
-$select = "SELECT p.id, p.post, u.username, u.role_id FROM posts AS p LEFT JOIN users AS u ON u.id = p.user_id";
+$user = $_SESSION['id'];
+
+$select = "SELECT p.id, p.post, p.created, p.likes, u.username, u.role_id FROM posts AS p LEFT JOIN users AS u ON u.id = p.user_id";
 $query = $conn->prepare($select);
 $query->execute();
 $result = $query->fetchAll();
+
+$likes = "SELECT * FROM likes WHERE user_id = '$user'";
+$queryLikes = $conn->prepare($likes);
+$queryLikes->execute();
+$likesArray = $queryLikes->fetchAll();
 
 ?>
 
@@ -38,7 +45,8 @@ $result = $query->fetchAll();
             echo '
             <div class="row justify-content-start my-2">
                 <div class="bg-success bg-opacity-50 col col-2 p-3" style="border-radius: 10px 0 0 10px">
-                    <span>'.$post['username'].'</span>
+                    <span class="row">'.$post['username'].'</span>
+                    <span class="row">'.$post['created'].'</span>
                 </div>
                 <div class="col col-7 mx-2 border border-start-0 border-3 border-secondary" style="border-radius: 0 10px 10px 0">
                     <p>'.$post['post'].'</p>
@@ -47,14 +55,34 @@ $result = $query->fetchAll();
                 ';
             if ($_SESSION['username'] == $post['username'] || $_SESSION['role'] == 1) {
                 echo '
-                <a href="post_edit.php?post_id='.$post['id'].'" class="btn btn-primary opacity-75">Edit</a>
-                <form action="../scripts/post_delete.php" method="POST" class="d-inline-block">
-                    <input type="hidden" name="post_id" value="'.$post['id'].'">
-                    <input type="submit" value="Delete" class="btn btn-danger opacity-75">
-                </form>
+                    <a href="post_edit.php?post_id='.$post['id'].'" class="btn btn-primary opacity-75">Edit</a>
+                    <form action="../scripts/post_delete.php" method="POST" class="d-inline-block">
+                        <input type="hidden" name="post_id" value="'.$post['id'].'">
+                        <input type="submit" value="Delete" class="btn btn-danger opacity-75">
+                    </form>
                 ';
             }
             echo '
+                    <form action="../scripts/like.php" method="POST">
+                        <input type="hidden" name="post_id" value="'.$post['id'].'">
+                        <input type="submit" value="';
+                        
+                        $temp = 0;
+                        foreach ($likesArray as $like) {
+                            if ($like['post_id'] == $post['id'] && $like['user_id'] == $user) {
+                                $temp = 1;
+                            }
+                        }
+                        if ($temp == 1) {
+                            echo 'Unlike';
+                        } else {
+                            echo 'like';
+                        }
+                        $temp=0;
+                        
+            echo ' ('.$post['likes'].') " class="btn btn-info opacity-75 my-1">
+                    </form>
+                    
                 </div>
             </div>
             ';
@@ -64,5 +92,17 @@ $result = $query->fetchAll();
 
 
 <?php
+foreach ($likesArray as $like) {
+    $temp = 0;
+    if ($like['post_id'] == $post['id'] && $like['user_id'] == $user) {
+        $temp = 1;
+    }
+}
+if ($temp = 1) {
+    echo 'Unlike';
+} else {
+    echo 'like';
+}
+
 include '../layouts/footer.php';
 ?>
