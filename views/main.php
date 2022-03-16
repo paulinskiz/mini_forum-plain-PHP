@@ -9,6 +9,7 @@ if (!$_SESSION) {
 
 $user = $_SESSION['id'];
 
+// Get post information from database:
 try {
     $select = "SELECT p.id, p.post, p.created, p.last_modified, p.likes, u.username, u.role_id FROM posts AS p LEFT JOIN users AS u ON u.id = p.user_id";
     $query = $conn->prepare($select);
@@ -18,6 +19,7 @@ try {
     echo 'Error!! --- '.$e->getMessage();
 }
 
+// Get loged in user likes information from database:
 try {
     $likes = "SELECT * FROM likes WHERE user_id = '$user'";
     $queryLikes = $conn->prepare($likes);
@@ -47,6 +49,8 @@ try {
         </div>
     </div>
 </div">
+
+<!-- All posts posted in the forum -->
 <div class="container my-5 bg-light px-5 py-3" style="border-radius: 10px;">
     <?php 
         foreach (array_reverse($result) as $post) {
