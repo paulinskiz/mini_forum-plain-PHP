@@ -12,9 +12,10 @@ $post_id = $_POST['post_id'];
 $user = $_SESSION['username'];
 $user_id = $_SESSION['id'];
 $user_role = $_SESSION['role'];
+$date = date('Y-m-d H:i:s');
 
 try {
-    $update = "UPDATE posts SET post = '$post' WHERE id = '$post_id'";
+    $update = "UPDATE posts SET post = '$post', last_modified = '$date' WHERE id = '$post_id'";
     $query = $conn->prepare($update);
     $query->execute();
 } catch (PDOException $e) {
