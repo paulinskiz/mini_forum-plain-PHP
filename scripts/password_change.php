@@ -12,10 +12,14 @@ $old_password = $_POST['old_password'];
 $new_password = $_POST['new_password'];
 $new_password2 = $_POST['new_password2'];
 
-$sql = "SELECT * FROM users WHERE id = '$id'";
-$query = $conn->prepare($sql);
-$query->execute();
-$result = $query->fetch();
+try {
+    $sql = "SELECT * FROM users WHERE id = '$id'";
+    $query = $conn->prepare($sql);
+    $query->execute();
+    $result = $query->fetch();
+} catch (PDOException $e) {
+    echo 'Error!! --- '.$e->getMessage();
+}
 
 $hash = $result['password'];
 
@@ -31,9 +35,13 @@ if ($new_password != $new_password2) {
 
 $newHash = password_hash($new_password, PASSWORD_BCRYPT);
 
-$update = "UPDATE users SET password = '$newHash' WHERE id = '$id'";
-$query2 = $conn->prepare($update);
-$query2->execute();
+try {
+    $update = "UPDATE users SET password = '$newHash' WHERE id = '$id'";
+    $query2 = $conn->prepare($update);
+    $query2->execute();
+} catch (PDOException $e) {
+    echo 'Error!! --- '.$e->getMessage();
+}
 
 header('location: ../views/profile.php?error=changed');
 

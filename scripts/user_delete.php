@@ -10,11 +10,16 @@ if (!$_SESSION) {
 $id = $_POST['id'];
 $user = $_SESSION['username'];
 
-$userSql = "SELECT * FROM users WHERE username = '$user'";
-$query = $conn->prepare($userSql);
-$query->execute();
+try {
+    $userSql = "SELECT * FROM users WHERE username = '$user'";
+    $query = $conn->prepare($userSql);
+    $query->execute();
 
-$result = $query->fetch();
+    $result = $query->fetch();
+} catch (PDOException $e) {
+    echo 'Error!! --- '.$e->getMessage();
+}
+
 $role_id = $result['role_id'];
 
 if ($role_id != 1) {
@@ -22,9 +27,13 @@ if ($role_id != 1) {
     die();
 }
 
-$delete = "DELETE FROM users WHERE id = '$id'";
-$query2 = $conn->prepare($delete);
-$query2->execute();
+try {
+    $delete = "DELETE FROM users WHERE id = '$id'";
+    $query2 = $conn->prepare($delete);
+    $query2->execute();
+} catch (PDOException $e) {
+    echo 'Error!! --- '.$e->getMessage();
+}
 
 header('location: ../views/users.php');
 

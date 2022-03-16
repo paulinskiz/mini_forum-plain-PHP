@@ -16,9 +16,13 @@ if ($_SESSION['username'] != $user) {
     die();
 }
 
-$insert = "INSERT INTO posts (user_id, post) VALUES ('$userId', '$post')";
-$query = $conn->prepare($insert);
-$query->execute();
+try {
+    $insert = "INSERT INTO posts (user_id, post) VALUES ('$userId', '$post')";
+    $query = $conn->prepare($insert);
+    $query->execute();
+} catch (PDOException $e) {
+    echo 'Error!! --- '.$e->getMessage();
+}
 
 header('location: ../');
 

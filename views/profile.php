@@ -7,11 +7,14 @@ if (!$_SESSION) {
 }
 $username = $_SESSION['username'];
 
-$sql = "SELECT * FROM users WHERE username = '$username'";
-$query = $conn->prepare($sql);
-$query->execute();
-$result = $query->fetch();
-
+try {
+    $sql = "SELECT * FROM users WHERE username = '$username'";
+    $query = $conn->prepare($sql);
+    $query->execute();
+    $result = $query->fetch();
+} catch (PDOException $e) {
+    echo 'Error!! --- '.$e->getMessage();
+}
 
 ?>
 

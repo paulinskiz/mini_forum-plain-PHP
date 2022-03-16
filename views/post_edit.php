@@ -7,10 +7,14 @@ if (!$_SESSION) {
     die();
 }
 
-$post_id = $_GET['post_id'];
-$user = $_SESSION['username'];
-$user_id = $_SESSION['id'];
-$user_role = $_SESSION['role'];
+try {
+    $post_id = $_GET['post_id'];
+    $user = $_SESSION['username'];
+    $user_id = $_SESSION['id'];
+    $user_role = $_SESSION['role'];
+} catch (PDOException $e) {
+    echo 'Error!! --- '.$e->getMessage();
+}
 
 // $userSql = "SELECT * FROM posts WHERE post_id = '$post_id'";
 

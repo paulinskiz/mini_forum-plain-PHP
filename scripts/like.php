@@ -10,15 +10,23 @@ if (!$_SESSION) {
 $post_id = $_POST['post_id'];
 $user_id = $_SESSION['id'];
 
-$postData = "SELECT * FROM posts WHERE id = $post_id";
-$queryPost = $conn->prepare($postData);
-$queryPost->execute();
-$postArray = $queryPost->fetch();
+try {
+    $postData = "SELECT * FROM posts WHERE id = $post_id";
+    $queryPost = $conn->prepare($postData);
+    $queryPost->execute();
+    $postArray = $queryPost->fetch();
+} catch (PDOException $e) {
+    echo 'Error!! --- '.$e->getMessage();
+}
 
-$likesData = "SELECT * FROM likes WHERE post_id = $post_id AND user_id = $user_id";
-$queryLikes = $conn->prepare($likesData);
-$queryLikes->execute();
-$likesArray = $queryLikes->fetch();
+try {
+    $likesData = "SELECT * FROM likes WHERE post_id = $post_id AND user_id = $user_id";
+    $queryLikes = $conn->prepare($likesData);
+    $queryLikes->execute();
+    $likesArray = $queryLikes->fetch();
+} catch (PDOException $e) {
+    echo 'Error!! --- '.$e->getMessage();
+}
 
 if ($likesArray) {
     $minus = $postArray['likes'] - 1;

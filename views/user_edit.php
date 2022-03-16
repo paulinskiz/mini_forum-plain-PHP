@@ -10,11 +10,16 @@ if (!$_SESSION) {
 $id = $_GET['userId'];
 $user = $_SESSION['username'];
 
-$userSql = "SELECT * FROM users WHERE username = '$user'";
-$query = $conn->prepare($userSql);
-$query->execute();
+try {
+    $userSql = "SELECT * FROM users WHERE username = '$user'";
+    $query = $conn->prepare($userSql);
+    $query->execute();
 
-$result = $query->fetch();
+    $result = $query->fetch();
+} catch (PDOException $e) {
+    echo 'Error!! --- '.$e->getMessage();
+}
+
 $role_id = $result['role_id'];
 
 if ($role_id != 1) {
@@ -22,10 +27,14 @@ if ($role_id != 1) {
     die();
 }
 
-$select = "SELECT * FROM users WHERE id = '$id'";
-$query2 = $conn->prepare($select);
-$query2->execute();
-$userData = $query2->fetch();
+try {
+    $select = "SELECT * FROM users WHERE id = '$id'";
+    $query2 = $conn->prepare($select);
+    $query2->execute();
+    $userData = $query2->fetch();
+} catch (PDOException $e) {
+    echo 'Error!! --- '.$e->getMessage();
+}
 
 $dataId = $userData['id'];
 $first_name = $userData['first_name'];

@@ -8,10 +8,15 @@ if (!$_SESSION) {
 
 $username = $_SESSION['username'];
 
-$getRole = "SELECT role_id FROM users WHERE username = '$username'";
-$query2 = $conn->prepare($getRole);
-$query2->execute();
-$role = $query2->fetch();
+try {
+    $getRole = "SELECT role_id FROM users WHERE username = '$username'";
+    $query2 = $conn->prepare($getRole);
+    $query2->execute();
+    $role = $query2->fetch();
+} catch (PDOException $e) {
+    echo 'Error!! --- '.$e->getMessage();
+}
+
 $roleId = $role['role_id'];
 
 $disabled = ''; 
@@ -19,12 +24,15 @@ if ($roleId != 1) {
     $disabled = 'disabled';
 }
 
-$sql = "SELECT * FROM users";
-$query = $conn->prepare($sql);
-$query->execute();
+try {
+    $sql = "SELECT * FROM users";
+    $query = $conn->prepare($sql);
+    $query->execute();
 
-$result = $query->fetchAll();
-
+    $result = $query->fetchAll();
+} catch (PDOException $e) {
+    echo 'Error!! --- '.$e->getMessage();
+}
 
 
 ?>

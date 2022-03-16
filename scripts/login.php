@@ -9,10 +9,14 @@ if (!$_POST){
 $username = $_POST['username'];
 $password = $_POST['password'];
 
-$sql = "SELECT * FROM users WHERE username = '$username'";
-$query = $conn->prepare($sql);
-$query->execute();
-$result = $query->fetch();
+try {
+    $sql = "SELECT * FROM users WHERE username = '$username'";
+    $query = $conn->prepare($sql);
+    $query->execute();
+    $result = $query->fetch();
+} catch (PDOException $e) {
+    echo 'Error!! --- '.$e->getMessage();
+}
 
 if ($result) {
     session_start();

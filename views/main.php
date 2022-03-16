@@ -9,15 +9,23 @@ if (!$_SESSION) {
 
 $user = $_SESSION['id'];
 
-$select = "SELECT p.id, p.post, p.created, p.likes, u.username, u.role_id FROM posts AS p LEFT JOIN users AS u ON u.id = p.user_id";
-$query = $conn->prepare($select);
-$query->execute();
-$result = $query->fetchAll();
+try {
+    $select = "SELECT p.id, p.post, p.created, p.likes, u.username, u.role_id FROM posts AS p LEFT JOIN users AS u ON u.id = p.user_id";
+    $query = $conn->prepare($select);
+    $query->execute();
+    $result = $query->fetchAll();
+} catch (PDOException $e) {
+    echo 'Error!! --- '.$e->getMessage();
+}
 
-$likes = "SELECT * FROM likes WHERE user_id = '$user'";
-$queryLikes = $conn->prepare($likes);
-$queryLikes->execute();
-$likesArray = $queryLikes->fetchAll();
+try {
+    $likes = "SELECT * FROM likes WHERE user_id = '$user'";
+    $queryLikes = $conn->prepare($likes);
+    $queryLikes->execute();
+    $likesArray = $queryLikes->fetchAll();
+} catch (PDOException $e) {
+    echo 'Error!! --- '.$e->getMessage();
+}
 
 ?>
 
@@ -66,13 +74,13 @@ $likesArray = $queryLikes->fetchAll();
                     <form action="../scripts/like.php" method="POST">
                         <input type="hidden" name="post_id" value="'.$post['id'].'">
                         <button type="submit" class="btn btn-info my-1" >';
-                        $opacity = 0;
+                        $temp = 0;
                         foreach ($likesArray as $like) {
                             if ($like['post_id'] == $post['id'] && $like['user_id'] == $user) {
-                                $opacity = 1;
+                                $temp = 1;
                             }
                         }
-                        if ($opacity == 1) {
+                        if ($temp == 1) {
                             echo '<i class="fa-solid fa-heart-crack"></i>';
                         } else {
                             echo '<i class="fa-solid fa-heart"></i>';

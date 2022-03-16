@@ -13,9 +13,13 @@ $user = $_SESSION['username'];
 $user_id = $_SESSION['id'];
 $user_role = $_SESSION['role'];
 
-$update = "UPDATE posts SET post = '$post' WHERE id = '$post_id'";
-$query = $conn->prepare($update);
-$query->execute();
+try {
+    $update = "UPDATE posts SET post = '$post' WHERE id = '$post_id'";
+    $query = $conn->prepare($update);
+    $query->execute();
+} catch (PDOException $e) {
+    echo 'Error!! --- '.$e->getMessage();
+}
 
 header('location: ../');
 
