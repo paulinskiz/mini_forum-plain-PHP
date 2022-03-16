@@ -30,11 +30,11 @@ try {
 ?>
 
 <!-- Form for new post -->
-<div class="container my-5 bg-secondary bg-opacity-25 px-5 py-3" style="border-radius: 10px 10px 0 0;">
+<div class="container my-5 bg-secondary bg-opacity-25 px-5 py-3" style="border-radius: 15px;">
     <div class="row justify-content-end">
         <form action="../scripts/post.php" method="POST" class="col col-8">
             <div class="form-floating col col-12">
-            <textarea class="form-control d-inline" placeholder="Leave a comment here" name="post" style="height: 150px" maxlength="600"></textarea>
+            <textarea class="form-control d-inline" placeholder="Leave a comment here" name="post" style="height: 150px; border-radius: 10px 0 0 10px;" maxlength="600"></textarea>
             <label for="floatingTextarea2">Say something:</label>
             </div>
             <div class="col col-12 d-flex flex-row-reverse">
@@ -47,7 +47,7 @@ try {
         </div>
     </div>
 </div">
-<div class="container my-5 bg-light px-5 py-3" style="border-radius: 0 0 10px 10px;">
+<div class="container my-5 bg-light px-5 py-3" style="border-radius: 10px;">
     <?php 
         foreach (array_reverse($result) as $post) {
             echo '
