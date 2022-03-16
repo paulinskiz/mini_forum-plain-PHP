@@ -65,24 +65,20 @@ $likesArray = $queryLikes->fetchAll();
             echo '
                     <form action="../scripts/like.php" method="POST">
                         <input type="hidden" name="post_id" value="'.$post['id'].'">
-                        <input type="submit" value="';
-                        
-                        $temp = 0;
+                        <button type="submit" class="btn btn-info my-1" >';
+                        $opacity = 0;
                         foreach ($likesArray as $like) {
                             if ($like['post_id'] == $post['id'] && $like['user_id'] == $user) {
-                                $temp = 1;
+                                $opacity = 1;
                             }
                         }
-                        if ($temp == 1) {
-                            echo 'Unlike';
+                        if ($opacity == 1) {
+                            echo '<i class="fa-solid fa-heart-crack"></i>';
                         } else {
-                            echo 'like';
+                            echo '<i class="fa-solid fa-heart"></i>';
                         }
-                        $temp=0;
-                        
-            echo ' ('.$post['likes'].') " class="btn btn-info opacity-75 my-1">
+            echo ' ('.$post['likes'].')</button>
                     </form>
-                    
                 </div>
             </div>
             ';
@@ -90,19 +86,6 @@ $likesArray = $queryLikes->fetchAll();
     ?>
 </div>
 
-
 <?php
-foreach ($likesArray as $like) {
-    $temp = 0;
-    if ($like['post_id'] == $post['id'] && $like['user_id'] == $user) {
-        $temp = 1;
-    }
-}
-if ($temp = 1) {
-    echo 'Unlike';
-} else {
-    echo 'like';
-}
-
 include '../layouts/footer.php';
 ?>
