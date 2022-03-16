@@ -19,11 +19,6 @@ try {
 
 $roleId = $role['role_id'];
 
-$disabled = ''; 
-if ($roleId != 1) {
-    $disabled = 'disabled';
-}
-
 try {
     $sql = "SELECT * FROM users";
     $query = $conn->prepare($sql);
@@ -42,7 +37,7 @@ try {
         <caption>List of users:</caption>
         <thead>
             <tr>
-                <th scope="col">#</th>
+                <th scope="col">id</th>
                 <th scope="col">Username</th>
                 <th scope="col">First name</th>
                 <th scope="col">Email</th>
@@ -54,7 +49,11 @@ try {
             <?php
             foreach ($result as $user) {
                 echo
-                '<tr><th scope="row">'.$user['id'].'</th><td>'.$user['username'].'</td><td>'.$user['first_name'].'</td><td>'.$user['email'].'</td><td>'.$user['created'].'</td><td><a href="user_edit.php?userId='.$user['id'].'" class="btn btn-primary mx-1 '.$disabled.'">EDIT</a><form action="../scripts/user_delete.php" method="POST" class="d-inline mx-1"><input type="hidden" name="id" value="'.$user['id'].'"><input type="submit" class="btn btn-danger '.$disabled.'" value="DELETE"></form></td></tr>';
+                '<tr><th scope="row">'.$user['id'].'</th><td>'.$user['username'].'</td><td>'.$user['first_name'].'</td><td>'.$user['email'].'</td><td>'.$user['created'].'</td><td>';
+                if ($_SESSION['role'] == 1) {
+                    echo '<a href="user_edit.php?userId='.$user['id'].'" class="btn btn-primary mx-1">EDIT</a><form action="../scripts/user_delete.php" method="POST" class="d-inline mx-1"><input type="hidden" name="id" value="'.$user['id'].'"><input type="submit" class="btn btn-danger" value="DELETE"></form>';
+                }
+                echo '</td></tr>';
             }
             ?>
         </tbody>
