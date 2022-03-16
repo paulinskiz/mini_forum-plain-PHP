@@ -95,6 +95,29 @@ $result = $query->fetch();
                         ?>
                     </div>                 
                 </form>
+            </div>
+            <div class="my-2">
+                <h2 class="text-primary">Delete your account:</h2>
+                <form class="row g-2" action="../scripts/account_delete.php" method="POST">
+                    <div class="row g-1">
+                        <div class="col-md-6">
+                            <label for="password" class="form-label">Enter password:</label>
+                            <input type="password" class="form-control" name="password">
+                        </div>
+                    </div>
+                    <div class="row g-1">
+                        <div>
+                            <input type="submit" value="Delete" class="btn btn-danger">
+                        </div>
+                        <?php
+                        if (!empty($_GET)) {
+                            if ($_GET['error'] == 'deletePassword') {
+                                echo '<span class="text-danger">Wrong password!</span>';
+                            }
+                        }
+                        ?>
+                    </div>
+                </form>
             </div>    
         </div>
     </div>
