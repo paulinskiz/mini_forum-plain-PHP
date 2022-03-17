@@ -19,7 +19,7 @@ try {
     echo 'Error!! --- '.$e->getMessage();
 }
 
-// Get loged in user likes information from database:
+// Get logged in user likes information from database:
 try {
     $likes = "SELECT * FROM likes WHERE user_id = '$user'";
     $queryLikes = $conn->prepare($likes);
@@ -28,6 +28,17 @@ try {
 } catch (PDOException $e) {
     echo 'Error!! --- '.$e->getMessage();
 }
+
+// Get comments information from database:
+try {
+    $comments = "SELECT c.comment, c.post_id, c.created, c.last_modified, c.likes, u.username FROM comments c LEFT JOIN posts p ON p.id = c.post_id LEFT JOIN users u ON u.id = c.user_id";
+    $queryComments = $conn->prepare($comments);
+    $queryComments->execute();
+    $commentsArray = $queryComments->fetchAll();
+} catch (PDOException $e) {
+    echo 'Error!! --- '.$e->getMessage();
+}
+
 
 ?>
 
@@ -48,56 +59,111 @@ try {
             <span><?php echo $_SESSION['username']; ?></span>
         </div>
     </div>
-</div">
 
-<!-- All posts posted in the forum -->
-<div class="container my-5 bg-light px-5 py-3" style="border-radius: 10px;">
-    <?php 
-        foreach (array_reverse($result) as $post) {
-            echo '
-            <div class="row justify-content-start my-2">
-                <div class="bg-success bg-opacity-50 col col-2 p-3" style="border-radius: 10px 0 0 10px">
-                    <span class="row">'.$post['username'].'</span>
-                    <span class="row">'.$post['created'].'</span>';
-                    if ($post['last_modified'] != $post['created']) {
-                        echo '<span class="row" style="font-size: 10px;">Edited: '.$post['last_modified'].'</span/>';
-                    }
-                echo '</div>
-                <div class="col col-7 mx-2 border border-start-0 border-3 border-secondary" style="border-radius: 0 10px 10px 0">
-                    <p>'.$post['post'].'</p>
+    <!-- All posts posted in the forum -->
+    <div class="container my-5 bg-light px-5 py-3" style="border-radius: 10px;">
+        <?php 
+            foreach (array_reverse($result) as $post) {
+                echo '
+                <div class="row justify-content-start mt-2">
+                    <div class="bg-success bg-opacity-50 col col-2 p-3" style="border-radius: 10px 0 0 10px">
+                        <span class="row">'.$post['username'].'</span>
+                        <span class="row">'.$post['created'].'</span>';
+                        if ($post['last_modified'] != $post['created']) {
+                            echo '<span class="row" style="font-size: 10px;">Edited: '.$post['last_modified'].'</span>';
+                        }
+                    echo '
+                    </div>
+                    <div class="col col-7 mx-2 border-top border-end border-3 border-secondary" style="border-radius: 0 10px 0 0">
+                        <p>'.$post['post'].'</p>
+                    </div>
+                    <div class="col col-2">
+                        <div class="row">
+                            <div>
+                                <form action="../scripts/like.php" method="POST" class="d-inline">
+                                    <input type="hidden" name="post_id" value="'.$post['id'].'">
+                                    <button type="submit" class="btn btn-info my-1" >';
+                                    $temp = 0;
+                                    foreach ($likesArray as $like) {
+                                        if ($like['post_id'] == $post['id'] && $like['user_id'] == $user) {
+                                            $temp = 1;
+                                        }
+                                    }
+                                    if ($temp == 1) {
+                                        echo '<i class="fa-solid fa-heart-crack"></i>';
+                                    } else {
+                                        echo '<i class="fa-solid fa-heart"></i>';
+                                    }
+                                    echo ' ('.$post['likes'].')</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div>';
+                                if ($_SESSION['username'] == $post['username'] || $_SESSION['role'] == 1) {
+                                    echo '
+                                    <a href="post_edit.php?post_id='.$post['id'].'" class="btn btn-primary opacity-75">Edit</a>
+                                    <form action="../scripts/post_delete.php" method="POST" class="d-inline">
+                                        <input type="hidden" name="post_id" value="'.$post['id'].'">
+                                        <input type="submit" value="Delete" class="btn btn-danger opacity-75">
+                                    </form>
+                                    ';
+                                }
+                                echo '
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col col-2">
-                    ';
-                    if ($_SESSION['username'] == $post['username'] || $_SESSION['role'] == 1) {
-                        echo '
-                        <a href="post_edit.php?post_id='.$post['id'].'" class="btn btn-primary opacity-75">Edit</a>
-                        <form action="../scripts/post_delete.php" method="POST" class="d-inline-block">
-                            <input type="hidden" name="post_id" value="'.$post['id'].'">
-                            <input type="submit" value="Delete" class="btn btn-danger opacity-75">
-                        </form>
-                        ';
+                <div class="col col-9 mt-1">';
+                    foreach ($commentsArray as $comment) {
+                        if ($comment['post_id'] == $post['id']) {
+                            $created = $comment['created'];
+                            $sec = strtotime($created);
+                            $newCreated = date ("y/d/m H:i", $sec);
+                            echo '
+                            <div class="row border-start border-end mt-1">
+                                <div class="col-3 border-end px-5">
+                                    <span class="row">'.
+                                    $comment['username'].'
+                                    </span>
+                                    <span class="row">'.
+                                    $newCreated.'
+                                    </span>';
+                                    if ($comment['created'] != $comment['last_modified']) {
+                                        $last_modified = $comment['last_modified'];
+                                        $sec = strtotime($last_modified);
+                                        $newModified = date ("y/d/m H:i", $sec);
+                                        echo '<span class="row" style="font-size: 10px;">Edited: '.$newModified.'</span>';
+                                    }
+                                    echo '
+                                </div>
+                                <div class="col-auto">'.
+                                    $comment['comment'].'
+                                </div>
+                            </div>';
+                        }
                     }
                     echo '
-                    <form action="../scripts/like.php" method="POST">
-                        <input type="hidden" name="post_id" value="'.$post['id'].'">
-                        <button type="submit" class="btn btn-info my-1" >';
-                        $temp = 0;
-                        foreach ($likesArray as $like) {
-                            if ($like['post_id'] == $post['id'] && $like['user_id'] == $user) {
-                                $temp = 1;
-                            }
-                        }
-                        if ($temp == 1) {
-                            echo '<i class="fa-solid fa-heart-crack"></i>';
-                        } else {
-                            echo '<i class="fa-solid fa-heart"></i>';
-                        }
-                        echo ' ('.$post['likes'].')</button>
-                    </form>
-                </div>
-            </div>    ';
-        }
-    ?>
+                    <div class="row justify-content-start py-2 border border-top-0 border-1 border-secondary" style="border-radius: 0 0 10px 10px">
+                        <form action="../scripts/comment.php" method="POST">
+                            <div class="row align-items-center mx-1">
+                                <div class="col-auto">
+                                    <label for="comment" class="col-form-label">Leave a comment:</label>
+                                </div>
+                                <div class="col-7">
+                                    <input type="text" name="comment" class="form-control" maxlength="500">
+                                    <input type="hidden" name="post_id" value="'.$post['id'].'">
+                                </div>
+                                <div class="col-auto">
+                                    <input type="submit" value="Enter" class="form-control btn-sm btn-primary">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>';
+            }
+        ?>
+    </div>
 </div>
 
 <?php

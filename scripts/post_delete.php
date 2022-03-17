@@ -26,6 +26,14 @@ if ($result['user_id'] != $user && $role != 1) {
 }
 
 try {
+    $deleteComm = "DELETE FROM comments WHERE post_id = '$post_id'";
+    $queryDelete = $conn->prepare($deleteComm);
+    $queryDelete->execute();
+} catch (PDOException $e) {
+    echo 'Error!! --- '.$e->getMessage();
+}
+
+try {
     $delete = "DELETE FROM posts WHERE id = '$post_id'";
     $query2 = $conn->prepare($delete);
     $query2->execute();

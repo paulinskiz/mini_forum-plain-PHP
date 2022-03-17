@@ -51,6 +51,14 @@ try{
 }
 
 try {
+    $deleteComm = "DELETE FROM comments WHERE user_id = '$id'";
+    $queryDelete = $conn->prepare($deleteComm);
+    $queryDelete->execute();
+} catch (PDOException $e) {
+    echo 'Error!! --- '.$e->getMessage();
+}
+
+try {
     $posts = "DELETE FROM posts WHERE user_id = $id";
     $postsDelete = $conn->prepare($posts);
     $postsDelete->execute();
