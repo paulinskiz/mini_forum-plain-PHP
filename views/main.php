@@ -131,7 +131,7 @@ try {
                             $sec = strtotime($created);
                             $newCreated = date ("y/d/m H:i", $sec);
                             echo '
-                            <div class="row border-start border-end mt-1">
+                            <div class="row border-top border-end my-1 pt-1">
                                 <div class="col-3 border-end ps-5">
                                     <span class="row">'.
                                     $comment['username'].'
