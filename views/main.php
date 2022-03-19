@@ -31,10 +31,20 @@ try {
 
 // Get comments information from database:
 try {
-    $comments = "SELECT c.comment, c.post_id, c.created, c.last_modified, c.likes, u.username FROM comments c LEFT JOIN posts p ON p.id = c.post_id LEFT JOIN users u ON u.id = c.user_id";
+    $comments = "SELECT c.id, c.comment, c.post_id, c.created, c.last_modified, c.likes, u.username FROM comments c LEFT JOIN posts p ON p.id = c.post_id LEFT JOIN users u ON u.id = c.user_id";
     $queryComments = $conn->prepare($comments);
     $queryComments->execute();
     $commentsArray = $queryComments->fetchAll();
+} catch (PDOException $e) {
+    echo 'Error!! --- '.$e->getMessage();
+}
+
+// Get logged in user liked comments information from database:
+try {
+    $commLikes = "SELECT * FROM comm_likes WHERE user_id = $user";
+    $queryCommLikes = $conn->prepare($commLikes);
+    $queryCommLikes->execute();
+    $commLikesArray = $queryCommLikes->fetchAll();
 } catch (PDOException $e) {
     echo 'Error!! --- '.$e->getMessage();
 }
@@ -122,7 +132,7 @@ try {
                             $newCreated = date ("y/d/m H:i", $sec);
                             echo '
                             <div class="row border-start border-end mt-1">
-                                <div class="col-3 border-end px-5">
+                                <div class="col-3 border-end ps-5">
                                     <span class="row">'.
                                     $comment['username'].'
                                     </span>
@@ -136,9 +146,42 @@ try {
                                         echo '<span class="row" style="font-size: 10px;">Edited: '.$newModified.'</span>';
                                     }
                                     echo '
-                                </div>
+                                </div>                               
                                 <div class="col-auto">'.
                                     $comment['comment'].'
+                                </div>
+                                <div class="col-auto">
+                                    <div class="d-inline">
+                                        <form action="../scripts/comment_like.php" method="POST" class="d-inline">
+                                            <input type="hidden" name="comment_id" value="'.$comment['id'].'">
+                                            <button type="submit" class="btn btn-sm btn-info">';
+                                            $temp2 = 0;
+                                            foreach ($commLikesArray as $like) {
+                                                if ($like['comment_id'] == $comment['id'] && $like['user_id'] == $user) {
+                                                    $temp2 = 1;
+                                                }
+                                            }
+                                            if ($temp2 == 1) {
+                                                echo '<i class="fa-solid fa-heart-crack"></i>';
+                                            } else {
+                                                echo '<i class="fa-solid fa-heart"></i>';
+                                            }
+                                            echo ' ('.$comment['likes'].')</button>
+                                        </form>
+                                    </div>';
+                                    if ($_SESSION['username'] == $comment['username'] || $_SESSION['role'] == 1) {
+                                        echo '
+                                        <div class="d-inline">
+                                            <a href="comment_edit.php?comment_id='.$comment['id'].'" class="btn btn-sm btn-primary opacity-75">Edit</a>
+                                        </div>
+                                        <div class="d-inline-block">
+                                            <form action="../scripts/comment_delete.php" method="POST" class="d-inline">
+                                                <input type="hidden" name="comment_id" value="'.$comment['id'].'">
+                                                <input type="submit" value="Delete" class="btn btn-sm btn-danger opacity-75">
+                                            </form>
+                                        </div>';
+                                    };
+                                echo '
                                 </div>
                             </div>';
                         }
