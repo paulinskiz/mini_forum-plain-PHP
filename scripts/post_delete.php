@@ -34,6 +34,14 @@ try {
 }
 
 try {
+    $deleteLikes = "DELETE FROM likes WHERE post_id = '$post_id'";
+    $queryDeleteLikes = $conn->prepare($deleteLikes);
+    $queryDeleteLikes->execute();
+} catch (PDOException $e) {
+    echo 'Error!! --- '.$e->getMessage();
+}
+
+try {
     $delete = "DELETE FROM posts WHERE id = '$post_id'";
     $query2 = $conn->prepare($delete);
     $query2->execute();
