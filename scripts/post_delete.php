@@ -26,6 +26,14 @@ if ($result['user_id'] != $user && $role != 1) {
 }
 
 try {
+    $deleteCommLikes = "DELETE comm_likes FROM comm_likes JOIN comments ON comments.id = comm_likes.comment_id WHERE post_id = '$post_id'";
+    $queryCommDelete = $conn->prepare($deleteCommLikes);
+    $queryCommDelete->execute();
+} catch (PDOException $e) {
+    echo 'Error!! --- '.$e->getMessage();
+}
+
+try {
     $deleteComm = "DELETE FROM comments WHERE post_id = '$post_id'";
     $queryDelete = $conn->prepare($deleteComm);
     $queryDelete->execute();
