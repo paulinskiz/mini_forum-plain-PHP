@@ -1,31 +1,24 @@
 <?php
-include '../layouts/header.php';
 require_once '../db_connect.php';
+session_start();
 
-if (!$_SESSION) {
+if (!$_POST) {
     header('location: ../');
     die();
 }
 
 $id = $_POST['id'];
 $user = $_SESSION['username'];
+$role = $_SESSION['role'];
 
-try {
-    $userSql = "SELECT * FROM users WHERE username = '$user'";
-    $query = $conn->prepare($userSql);
-    $query->execute();
-    $result = $query->fetch();
-} catch (PDOException $e) {
-    echo 'Error!! --- '.$e->getMessage();
-}
-
-$role_id = $result['role_id'];
-
-if ($role_id != 1) {
+// Check if user is admin:
+if ($role != 1) {
     header('location: ../');
     die();
 }
 
+// Get all info from all tables of the user and edit tables:
+// Get all liked posts:
 try {
     $allLikes = "SELECT post_id FROM likes WHERE user_id = '$id'";
     $allLikesSelect = $conn->prepare($allLikes);
@@ -35,6 +28,7 @@ try {
     echo 'Error!! --- '.$e->getMessage();
 }
 
+// unlike all posts:
 foreach ($likesArray as $like) {
     $post_id = $like['post_id'];
     $unlike = "UPDATE posts SET likes = likes - 1 WHERE id = '$post_id'";
@@ -42,6 +36,7 @@ foreach ($likesArray as $like) {
     $likesUpdate->execute();
 }
 
+// delete likes from likes table:
 try{
     $likes = "DELETE FROM likes WHERE user_id = $id";
     $likesDelete = $conn->prepare($likes);
@@ -50,6 +45,34 @@ try{
     echo 'Error!! --- '.$e->getMessage();
 }
 
+// Get all liked comments:
+try {
+    $allCommLikes = "SELECT comment_id FROM comm_likes WHERE user_id = '$id'";
+    $allCommLikesSelect = $conn->prepare($allCommLikes);
+    $allCommLikesSelect->execute();
+    $commLikesArray = $allCommLikesSelect->fetchAll();
+} catch (PDOException $e) {
+    echo 'Error!! --- '.$e->getMessage();
+}
+
+// unlike all comments:
+foreach ($commLikesArray as $like) {
+    $comment_id = $like['comment_id'];
+    $unlikeComm = "UPDATE comments SET likes = likes - 1 WHERE id = '$comment_id'";
+    $commLikesUpdate = $conn->prepare($unlikeComm);
+    $commLikesUpdate->execute();
+}
+
+// delete comment likes from comm_likes table:
+try{
+    $commLikes = "DELETE FROM comm_likes WHERE user_id = $id";
+    $commLikesDelete = $conn->prepare($commLikes);
+    $commLikesDelete->execute();
+} catch (PDOException $e) {
+    echo 'Error!! --- '.$e->getMessage();
+}
+
+// delete comments:
 try {
     $deleteComm = "DELETE FROM comments WHERE user_id = '$id'";
     $queryDelete = $conn->prepare($deleteComm);
@@ -58,6 +81,7 @@ try {
     echo 'Error!! --- '.$e->getMessage();
 }
 
+// Delete posts:
 try {
     $posts = "DELETE FROM posts WHERE user_id = $id";
     $postsDelete = $conn->prepare($posts);
@@ -66,6 +90,7 @@ try {
     echo 'Error!! --- '.$e->getMessage();
 }
 
+// delete the user:
 try {
     $delete = "DELETE FROM users WHERE id = '$id'";
     $query2 = $conn->prepare($delete);
@@ -74,11 +99,12 @@ try {
     echo 'Error!! --- '.$e->getMessage();
 }
 
-header('location: ../views/users.php');
+// if deleted loged in user then logout:
+if ($_SESSION == $id) {
+    session_unset();
+    header('location: ../');
+} else {
+    header('location: ../views/users.php');    
+}
 
-
-
-?>
-<?php
-include '../layouts/footer.php';
 ?>
