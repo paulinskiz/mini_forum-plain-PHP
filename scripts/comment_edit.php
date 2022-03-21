@@ -14,6 +14,7 @@ $user_id = $_SESSION['id'];
 $user_role = $_SESSION['role'];
 $date = date('Y-m-d H:i:s');
 
+// update the comment to database:
 try {
     $update = "UPDATE comments SET comment = '$comment', last_modified = '$date' WHERE id = '$comment_id'";
     $query = $conn->prepare($update);

@@ -11,6 +11,7 @@ $role = $_SESSION['role'];
 $user = $_SESSION['id'];
 $comment_id = $_POST['comment_id'];
 
+// Select the comment from database:
 try {
     $select = "SELECT * FROM comments WHERE id = '$comment_id'";
     $query = $conn->prepare($select);
@@ -20,11 +21,13 @@ try {
     echo 'Error!! --- '.$e->getMessage();
 }
 
+// check if user have privileges for delete:
 if ($result['user_id'] != $user && $role != 1) {
     header('location: ../');
     die();
 }
 
+// delete all this comment likes:
 try {
     $deleteCommLikes = "DELETE FROM comm_likes WHERE comment_id = '$comment_id'";
     $queryDelete = $conn->prepare($deleteCommLikes);
@@ -33,6 +36,7 @@ try {
     echo 'Error!! --- '.$e->getMessage();
 }
 
+// delete comment:
 try {
     $delete = "DELETE FROM comments WHERE id = '$comment_id'";
     $query2 = $conn->prepare($delete);

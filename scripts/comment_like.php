@@ -10,6 +10,7 @@ if (!$_POST) {
 $comment_id = $_POST['comment_id'];
 $user_id = $_SESSION['id'];
 
+// Get all info about comment:
 try {
     $commentData = "SELECT * FROM comments WHERE id = $comment_id";
     $queryComm = $conn->prepare($commentData);
@@ -19,6 +20,7 @@ try {
     echo 'Error!! --- '.$e->getMessage();
 }
 
+// Get info about that comment like
 try {
     $commLikesData = "SELECT * FROM comm_likes WHERE comment_id = $comment_id AND user_id = $user_id";
     $queryCommLikes = $conn->prepare($commLikesData);
@@ -28,6 +30,7 @@ try {
     echo 'Error!! --- '.$e->getMessage();
 }
 
+// Add ar remove likes for comments: 
 if ($commLikesArray) {
     $unlike = "UPDATE comments SET likes = likes - 1 WHERE id = $comment_id";
     $queryUnlike = $conn->prepare($unlike);
