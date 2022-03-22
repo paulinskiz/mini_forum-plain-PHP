@@ -2,6 +2,7 @@
 include '../layouts/header.php';
 require_once '../db_connect.php';
 
+// don't show main page for not logged in users:
 if (!$_SESSION) {
     header('location: ../');
     die();
