@@ -13,6 +13,7 @@ $username = $_POST['username'];
 $role_id = $_POST['role_id'];
 $id = $_POST['id'];
 
+// Updade user information to database:
 try {
     $update = "UPDATE users SET first_name = '$first_name', last_name = '$last_name', username = '$username', email = '$email', role_id = '$role_id' WHERE id = '$id'";
     $query = $conn->prepare($update);

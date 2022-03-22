@@ -8,17 +8,9 @@ if (!$_SESSION) {
 
 $username = $_SESSION['username'];
 
-try {
-    $getRole = "SELECT role_id FROM users WHERE username = '$username'";
-    $query2 = $conn->prepare($getRole);
-    $query2->execute();
-    $role = $query2->fetch();
-} catch (PDOException $e) {
-    echo 'Error!! --- '.$e->getMessage();
-}
+$roleId = $_SESSION['role'];
 
-$roleId = $role['role_id'];
-
+// get information about users from database:
 try {
     $sql = "SELECT * FROM users";
     $query = $conn->prepare($sql);
@@ -32,6 +24,7 @@ try {
 
 ?>
 
+<!-- table with all users and and action buttons for admin: -->
 <div class="container my-5">
     <table class="table caption-top align-middle">
         <caption>List of users:</caption>

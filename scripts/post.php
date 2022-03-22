@@ -16,6 +16,7 @@ if ($_SESSION['username'] != $user) {
     die();
 }
 
+// create a new post into database:
 try {
     $insert = "INSERT INTO posts (user_id, post) VALUES ('$userId', '$post')";
     $query = $conn->prepare($insert);

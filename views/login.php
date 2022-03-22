@@ -1,11 +1,13 @@
 <?php
 include '../layouts/header.php';
 
+// don't show login page for logged in users:
 if (isset($_SESSION['username'])) {
     header('location: main.php');
 }
 ?>
 
+<!-- log in form: -->
 <div class="container my-5">
     <div class="row justify-content-md-center">
         <div class="col col-lg-4">

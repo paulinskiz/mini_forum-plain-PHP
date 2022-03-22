@@ -1,12 +1,14 @@
 <?php
 include '../layouts/header.php';
 
+// don't show welcome page without success registration:
 if ($_GET['error']!='success') {
     header('location: ../');
     die();
 }
 ?>
 
+<!-- Welcome page for new registered user: -->
 <div class="container my-5">
     <div class="row justify-content-md-center">
         <div class="col col-lg-4">

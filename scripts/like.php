@@ -10,6 +10,7 @@ if (!$_SESSION) {
 $post_id = $_POST['post_id'];
 $user_id = $_SESSION['id'];
 
+// get info about post from database:
 try {
     $postData = "SELECT * FROM posts WHERE id = $post_id";
     $queryPost = $conn->prepare($postData);
@@ -19,6 +20,7 @@ try {
     echo 'Error!! --- '.$e->getMessage();
 }
 
+// get info about likes from database:
 try {
     $likesData = "SELECT * FROM likes WHERE post_id = $post_id AND user_id = $user_id";
     $queryLikes = $conn->prepare($likesData);
@@ -28,6 +30,7 @@ try {
     echo 'Error!! --- '.$e->getMessage();
 }
 
+// like add or remove from database:
 if ($likesArray) {
     $minus = $postArray['likes'] - 1;
     $unlike = "UPDATE posts SET likes = '$minus' WHERE id = $post_id";

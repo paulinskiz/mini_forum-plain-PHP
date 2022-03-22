@@ -8,25 +8,16 @@ if (!$_SESSION) {
 }
 
 $id = $_GET['userId'];
-$user = $_SESSION['username'];
 
-try {
-    $userSql = "SELECT * FROM users WHERE username = '$user'";
-    $query = $conn->prepare($userSql);
-    $query->execute();
-
-    $result = $query->fetch();
-} catch (PDOException $e) {
-    echo 'Error!! --- '.$e->getMessage();
-}
-
-$role_id = $result['role_id'];
+// check the privileges:
+$role_id = $_SESSION['role'];
 
 if ($role_id != 1) {
     header('location: ../');
     die();
 }
 
+// get the information about user from database:
 try {
     $select = "SELECT * FROM users WHERE id = '$id'";
     $query2 = $conn->prepare($select);
@@ -45,6 +36,7 @@ $role_id = $userData['role_id'];
 
 ?>
 
+<!-- form for user edit with user information: -->
 <div class="container my-5 py-5">
     <div class="row justify-content-md-around">
         <div class="col col-lg-5">

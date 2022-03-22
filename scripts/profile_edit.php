@@ -14,6 +14,7 @@ $username = $_POST['username'];
 $password = $_POST['password'];
 $id = $_POST['id'];
 
+// get info about the user from database:
 try {
     $sql = "SELECT * FROM users WHERE id = $id";
     $query = $conn->prepare($sql);
@@ -23,12 +24,14 @@ try {
     echo 'Error!! --- '.$e->getMessage();
 }
 
+// check if the password was correct:
 $hash = $result['password'];
 if (!password_verify($password, $hash)) {
     header('location: ../views/profile.php?error=password');
     die();
 }
 
+// update the user information to database:
 try {
     $edit = "UPDATE users SET first_name = '$first_name', last_name = '$last_name', username = '$username', email = '$email' WHERE id = $id";
     $query2 = $conn->prepare($edit);
@@ -37,6 +40,7 @@ try {
     echo 'Error!! --- '.$e->getMessage();
 }
 
+// change the session username:
 $_SESSION['username'] = "$username";
 
 header('location: ../views/profile.php?error=success');

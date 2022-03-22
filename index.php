@@ -1,13 +1,14 @@
 <?php
 include 'layouts/header.php';
 
+// if the user is logged in then redirect to main page:
 if (isset($_SESSION['username'])) {
     header('location: views/main.php');
 }
 
 ?>
 
-
+<!-- index page for log in or register: -->
 <div class="container my-5">
     <div class="row justify-content-md-center">
         <div class="col col-lg-4">

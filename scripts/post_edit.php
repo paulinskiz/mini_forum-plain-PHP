@@ -14,6 +14,7 @@ $user_id = $_SESSION['id'];
 $user_role = $_SESSION['role'];
 $date = date('Y-m-d H:i:s');
 
+// update the post to database:
 try {
     $update = "UPDATE posts SET post = '$post', last_modified = '$date' WHERE id = '$post_id'";
     $query = $conn->prepare($update);

@@ -7,6 +7,7 @@ if (!$_SESSION) {
 }
 $username = $_SESSION['username'];
 
+// get information about the user from database:
 try {
     $sql = "SELECT * FROM users WHERE username = '$username'";
     $query = $conn->prepare($sql);
@@ -18,6 +19,7 @@ try {
 
 ?>
 
+<!-- forms for user information edit, password change and user delete: -->
 <div class="container my-5 py-5">
     <div class="row justify-content-md-around">
         <div class="col col-lg-5">

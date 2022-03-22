@@ -9,6 +9,7 @@ if (!$_POST){
 $username = $_POST['username'];
 $password = $_POST['password'];
 
+// get information about the user from database:
 try {
     $sql = "SELECT * FROM users WHERE username = '$username'";
     $query = $conn->prepare($sql);
@@ -18,6 +19,7 @@ try {
     echo 'Error!! --- '.$e->getMessage();
 }
 
+// check if there is the user, is the password was correct and set the session:
 if ($result) {
     session_start();
     $hash = $result["password"];

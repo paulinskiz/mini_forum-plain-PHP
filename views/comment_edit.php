@@ -15,12 +15,17 @@ $user_role = $_SESSION['role'];
 
 // $userSql = "SELECT * FROM posts WHERE post_id = '$post_id'";
 
-$select = "SELECT c.id, c.comment, u.username FROM comments AS c LEFT JOIN users AS u ON u.id = c.user_id HAVING c.id = '$comment_id'";
-$query = $conn->prepare($select);
-$query->execute();
-$result = $query->fetch();
+// get the information about post and user from database:
+try {
+    $select = "SELECT c.id, c.comment, u.username FROM comments AS c LEFT JOIN users AS u ON u.id = c.user_id HAVING c.id = '$comment_id'";
+    $query = $conn->prepare($select);
+    $query->execute();
+    $result = $query->fetch();
+} catch (PDOException $e) {
+    echo 'Error!! --- '.$e->getMessage();
+}
 
-
+// check the privileges:
 if ($result['username'] != $user && $user_role != 1) {
     header('location: ../');
     die();
@@ -30,7 +35,7 @@ $comment = $result['comment'];
 
 ?>
 
-
+<!-- form for comment edit with comment information: -->
 <div class="container my-5 bg-secondary bg-opacity-25 px-5 py-3" style="border-radius: 10px 10px 0 0;">
     <div class="row justify-content-end">
         <form action="../scripts/comment_edit.php" method="POST" class="col col-8">
